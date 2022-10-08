@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import {actionuser} from "../Actionfolder/Firstaction"
+import {connect} from "react-redux"
+import { v4 as uuid} from 'uuid';
 
  class AddUserform extends Component {
-  constructor (){
+  constructor (props){
     super()
     this.state={
       name:"",
@@ -16,13 +19,14 @@ import Form from 'react-bootstrap/Form';
     this.setState({
       [e.target.name] : e.target.value
     })
-    console.log (this.state)
+    // console.log (this.state)
 
   }
   handleSubmit =(e)=>{
     e.preventDefault()
-    this.props.adduser(this.state)
-
+    // this.props.edituser(this.state.id, this.state)
+    this.props.actionuser({id:uuid(), name:this.state.name, email:this.state.email, gen:this.state.gen})
+    
     this.setState({
     name:"",
     email:"",
@@ -50,7 +54,7 @@ import Form from 'react-bootstrap/Form';
 
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Gen</Form.Label>
-        <Form.Control type="number" placeholder="Enter Gen" 
+        <Form.Control type="number" placeholder="Enter gen" 
          value={this.state.gen} 
         name="gen" 
         onChange={this.handleinput}  />
@@ -63,4 +67,7 @@ import Form from 'react-bootstrap/Form';
     )
   }
 }
-export default AddUserform
+const mapDispatchToProps ={
+  actionuser: actionuser
+}
+export default connect (null, mapDispatchToProps) (AddUserform)
