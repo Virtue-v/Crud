@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/Form';
 import {actionuser} from "../Actionfolder/Firstaction"
 import {connect} from "react-redux"
 import { v4 as uuid} from 'uuid';
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {db} from "../firebase/Firebaseconfig"
 
  class AddUserform extends Component {
   constructor (props){
@@ -22,11 +24,21 @@ import { v4 as uuid} from 'uuid';
     // console.log (this.state)
 
   }
-  handleSubmit =(e)=>{
+  handleSubmit = async(e)=>{
     e.preventDefault()
     // this.props.edituser(this.state.id, this.state)
-    this.props.actionuser({id:uuid(), name:this.state.name, email:this.state.email, gen:this.state.gen})
+    // this.props.actionuser({id:uuid(), name:this.state.name, email:this.state.email, gen:this.state.gen})
+    let NewUser = {id:uuid(), name:this.state.name, email:this.state.email, gen:this.state.gen, timestamp: serverTimestamp()}
+    try{await setDoc(doc(db, "new-users", NewUser.id), 
+      NewUser
     
+    );} catch(e){console.log (e)}
+    
+      
+
+
+
+
     this.setState({
     name:"",
     email:"",

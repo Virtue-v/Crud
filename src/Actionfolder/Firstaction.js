@@ -1,7 +1,7 @@
 export const actionuser =(AddedUser)=>{
     return {
         type: "Submit-New-User",
-        payload: "AddedUser"
+        payload: AddedUser
     }
 }
 

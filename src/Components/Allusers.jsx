@@ -5,6 +5,9 @@ import {Col} from 'react-bootstrap'
 import Modal from 'react-bootstrap/Modal';
 import { connect} from 'react-redux';
 import { deletebutton} from "../Actionfolder/Firstaction"
+import { doc, deleteDoc} from "firebase/firestore";
+import {db} from "../firebase/Firebaseconfig"
+
 
 import EditUsers from './EditUsers';
 
@@ -14,9 +17,13 @@ const Allusers = (props) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleDelete =(e)=> {
+    const handleDelete = async(e)=> {
         e.preventDefault();
-    props.deletebutton(props.userinfo.id);
+    // props.deletebutton(props.userinfo.id);
+    try { await deleteDoc (doc(db, "new-users", props.userinfo.id));
+    } catch (error) { console.log(error)
+        
+    }
 
     }
     return (
@@ -38,6 +45,7 @@ const Allusers = (props) => {
                         <p>Name:{props.userinfo.name}</p>
                         <p>Email:{props.userinfo.email}</p>
                        <p> Gen:{props.userinfo.gen}</p>
+                       
                     </Card.Text>
                     <Button variant="primary" onClick={handleShow}>Edit</Button>
                     <Button variant="primary" onClick={handleDelete}>Delete</Button>

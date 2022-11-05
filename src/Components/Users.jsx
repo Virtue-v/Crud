@@ -4,7 +4,7 @@ import Allusers from './Allusers';
 import {connect} from "react-redux"
 
 
-function Users(props) {
+function Users (props) {
   return (
     <Container>
         <Row>
@@ -29,7 +29,7 @@ function Users(props) {
 const mapStateToProps = (state) => { 
 
   return {
-    connectstate: state.users
+    connectstate: state.UserReducers.users
   }
 } 
 export default connect (mapStateToProps) (Users)

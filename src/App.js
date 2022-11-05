@@ -1,82 +1,52 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
-import { Container, Row, Col} from 'react-bootstrap';
-import Users from './Components/Users';
 
-import { Component } from 'react';
-import AddUserform from './Components/AddUserform';
+import './App.css'
+import { useEffect } from 'react'
+import { collection, query, onSnapshot, orderBy} from "firebase/firestore"
+import {db, auth} from "./firebase/Firebaseconfig"
+import {actionuser} from "./Actionfolder/Firstaction"
+import {useDispatch} from "react-redux"
+import Routing from "./Routing"
+import {loginuser} from "./Actionfolder/Authaction"
+import {onAuthStateChanged} from "firebase/auth"
+import {connect} from "react-redux"
+
+function App ({loginuser}) {
+const dispatch = useDispatch ()
+useEffect(()=>{
+  const readData =  async()=>{
+    const q = await  query(collection(db, "new-users"), orderBy("name", "asc"));
+     onSnapshot(q, (querySnapshot) => {
+      const users = [];
+      querySnapshot.forEach((doc) => {
+          users.push(doc.data());
+      }); dispatch (actionuser(users))
+        console.log(users);
+    });
+
+  }
+  readData();
+}, [dispatch]);
 
 
-class App extends Component {
-  constructor(props){
-    super(props)
-    this.state={
-    Users: [
-      {
-        name: "Val",
-        email: "Val@yahoo.com",
-        gen: "20",
-        id:"gghghgh8000"
-      },
+useEffect(()=>{
 
-      {
-        name: "Chuks",
-        email: "Chuks@yahoo.com",
-        gen: "25",
-        id:"gghghg980i99"
+  onAuthStateChanged(auth, (user) => {
+    if (user) loginuser (user)
+    else loginuser (null)
+  })
 
-      },
+},[loginuser]);
 
-      {
-        name: "Irene",
-        email: "Irene@yahoo.com",
-        gen: "24",
-        id:"0009980i9kjjj9"
-
-      }
-
-    ]
-    }
+    return (
+      <>
+      <Routing/>
+      </>
+    )
   }
 
-  AddNewuser = (user)=>{
-    user.id = Math.random().toString()
-    this.setState({
-      Users:[...this.state.Users, user]
-    })
-    console.log (user)
+
+  const mapDispatchToProps = {
+    loginuser:loginuser
   }
 
-  removeUser =(id)=>{
-let listedUsers = this.state.Users.filter(user => user.id !==id)
-this.setState({
-
-  Users: listedUsers
-})
-  }
-
-  edituser = (id, updatedinfo) =>{
-    this.setState({
-      Users: this.state.Users.map (User => User.id === id ? updatedinfo : User)
-    })
-  }
-  render(){
-  return (
-    <>
-      <Container fluid>
-      <Row>
-       <Col md="4">
-        <AddUserform adduser={this.AddNewuser}/>
-        </Col> 
-       <Col>
-       <Users userdata={this.state.Users} removeUser={this.removeUser} edituser={this.edituser}/>
-       </Col> 
-      </Row>
-      </Container>
-      
-    </>
-  );
-}
-}
-
-export default App;
+export default connect (null, mapDispatchToProps) (App)

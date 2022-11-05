@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {connect} from "react-redux"
 import {updateuser} from "../Actionfolder/Firstaction"
+import { doc, updateDoc } from "firebase/firestore";
+import {db} from "../firebase/Firebaseconfig"
 
  class EditUsers extends Component {
   constructor (props){
@@ -16,17 +18,23 @@ import {updateuser} from "../Actionfolder/Firstaction"
   }
   handleinput =(e)=>{
     e.preventDefault()
+    
     this.setState({
       [e.target.name] : e.target.value
     })
     console.log (this.state)
 
   }
-  handleSubmit =(e)=>{
+  handleSubmit =async(e)=>{
     e.preventDefault()
-    this.props.updateuser({id:this.state.id, name:this.state.name, email:this.state.email, gen:this.state.gen,})
+    let edituser =(this.state.id, this.state)
+    const editinguser = doc(db, "new-users", this.state.id);
 
-    // this.props.edituser(this.state.id, this.state)
+
+await updateDoc(editinguser, edituser);
+    // this.props.updateuser({id:this.state.id, name:this.state.name, email:this.state.email, gen:this.state.gen})
+
+ 
 
     this.setState({
     name:"",
